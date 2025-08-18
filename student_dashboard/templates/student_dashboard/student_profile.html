@@ -1,0 +1,58 @@
+{% extends 'student_dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content">
+  <div class="page-inner">
+    <div class="page-header">
+      <h4 class="page-title">Student Profile</h4>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow border-0">
+          <div class="card-header p-0" >
+            <div class="d-flex justify-content-center" style="margin-top: 130px;">
+              <div class="avatar avatar-xl">
+                <img src="{% if request.user.profile_picture %}
+                            {{ request.user.profile_picture.url }}
+                          {% else %}
+                            {% static 'dashboard/img/profile.jpg' %}
+                          {% endif %}"
+                     class="avatar-img rounded-circle border border-white border-3"
+                     alt="Profile Picture">
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body text-center">
+            <h3 class="mb-1">{{ request.user.get_full_name }}</h3>
+            <p class="text-muted mb-2">Student</p>
+            <p class="mb-3">Creative, Flexible and Detail-oriented</p>
+            <a href="{% url 'student_index'%}" class="btn btn-primary btn-sm mb-4">Back to Homepage</a>
+
+            <div class="text-start px-4">
+              <p><strong>Email:</strong> {{ request.user.email }}</p>
+              <p><strong>Phone:</strong> {{ request.user.phone }}</p>
+              <p><strong>Username:</strong> {{ request.user.username }}</p>
+              <p><strong>Enroll:</strong> {{ request.user.enroll_number }}</p>
+              <p><strong>role:</strong> {{ request.user.role }}</p>
+              <p><strong>Gender:</strong> {{ request.user. }}</p>
+              <p><strong>Date of Birth:</strong> {{ request.user.dob }}</p>
+              <p><strong>Location:</strong> Ahmedabad, India</p>
+              <div class="text-end my-3">
+                <a href="{% url 'update_student' request.user.pk %}" class="btn btn-outline-primary">
+                  <i class="fas fa-user-edit me-1"></i> Update Profile
+                </a>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

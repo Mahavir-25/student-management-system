@@ -1,0 +1,56 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="container mt-10">
+  <div class="card shadow rounded-4 p-4">
+    <h3 class="mb-4"><i class="bi bi-journal-richtext me-2"></i>Course Details</h3>
+    
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Course Name:</div>
+      <div class="col-md-8">{{ course.name }}</div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Description:</div>
+      <div class="col-md-8">{{ course.description }}</div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Category:</div>
+      <div class="col-md-8">{{ course.category }}</div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Fees:</div>
+      <div class="col-md-8">₹{{ course.fees }}</div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Duration:</div>
+      <div class="col-md-8">{{ course.duration }}</div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Trainer:</div>
+      <div class="col-md-8">{% for trainer in course.trainers.all %}
+    {{ trainer }}{% if not forloop.last %}, {% endif %}
+  {% empty %}
+    No trainers assigned
+  {% endfor %}</div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Timing:</div>
+      <div class="col-md-8">{{ course.timing }}</div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-end">
+      <a href="{% url 'update_course' course.id %}" class="btn btn-warning me-2">
+        <i class="bi bi-pencil-square"></i> Edit
+      </a>
+      <a href="{% url 'course_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Back to List
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

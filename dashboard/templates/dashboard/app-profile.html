@@ -1,0 +1,49 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content">
+  <div class="page-inner">
+    <div class="page-header">
+      <h4 class="page-title">Admin Profile</h4>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card card-profile">
+          <div class="card-header" >
+            <div class="profile-picture">
+              <div class="avatar avatar-xl">
+                <img src="{% if request.user.profile_picture %}
+                            {{ request.user.profile_picture.url }}
+                          {% else %}
+                            {% static 'dashboard/img/profile.jpg' %}
+                          {% endif %}" 
+                     alt="Profile Picture" 
+                     class="avatar-img rounded-circle">
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="user-profile text-center">
+              <div class="name">{{ request.user.get_full_name }}</div>
+              <div class="job">Admin</div>
+              <div class="desc">Creative, Flexible and Detail-oriented</div>
+              <div class="view-profile mt-3">
+                <a href="#" class="btn btn-primary btn-block">View Full Profile</a>
+              </div>
+              <ul class="list-unstyled mt-3 text-left pl-4 pr-4">
+                <li><strong>Email:</strong> {{ request.user.email }}</li>
+                <li><strong>Phone:</strong> {{ request.user.phone }}</li>
+                <li><strong>Username:</strong> {{ request.user.username }}</li>
+                <li><strong>Location:</strong> Ahmedabad, India</li>
+                <li><strong>Bio:</strong> I am a full-stack developer managing the student dashboard.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

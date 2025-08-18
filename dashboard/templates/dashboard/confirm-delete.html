@@ -1,0 +1,11 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+  <div class="container mt-5">
+    <h3>Are you sure you want to delete "{{ object.first_name }} {{ object.last_name }}"?</h3>
+    <form method="post">
+      {% csrf_token %}
+      <a href="{% url 'student_list' %}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+  </div>
+{% endblock %}

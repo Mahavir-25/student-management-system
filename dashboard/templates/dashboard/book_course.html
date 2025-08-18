@@ -1,0 +1,166 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-15">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">
+        <i class="fas fa-book-reader me-2"></i>
+        {% if object %} Update Booked Course {% else %} Book a Course {% endif %}
+      </h4>
+    </div>
+
+    <div class="card-body">
+  <form method="POST" novalidate>
+    {% csrf_token %}
+
+    <!-- Show any non-field errors -->
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <div class="row">
+      <!-- Course -->
+      <div class="col-md-6 mb-3">
+        {{ form.course.label_tag }}
+        {{ form.course }}
+        {% if form.course.errors %}
+          <div class="text-danger">
+            {% for error in form.course.errors %}
+              {{ error }}
+                <!-- <a href="{% url 'update_course' course.id %}" class="btn btn-sm btn-outline-warning w-100">
+                  <i class="bi bi-pencil-square"></i> Edit
+                </a> -->
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Batch -->
+      <div class="col-md-6 mb-3">
+        {{ form.batch.label_tag }}
+        {{ form.batch }}
+        {% if form.batch.errors %}
+          <div class="text-danger">
+            {% for error in form.batch.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Students -->
+      <div class="col-md-6 mb-3">
+        {{ form.students.label_tag }}
+        {{ form.students }}
+        {% if form.students.errors %}
+              <div class="text-danger">
+                {% for error in form.students.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %} 
+              
+          </div>
+      <!-- Staff-->
+     <div class="col-md-6 mb-3">
+  {{ form.staff.label_tag }}
+  <!-- Hide original select -->
+  <div style="display:none;">
+    {{ form.staff }}
+  </div>
+   <div id="staff-dropdown" style="position: relative; max-width: 300px; user-select:none; cursor:pointer; border:1px solid #ccc; padding:5px; border-radius:4px;">
+    <div id="staff-selected" style="min-height: 35px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center;">
+      <span style="color: #888;">Select staff...</span>
+    </div>
+    <div id="staff-options" style="position: absolute; top: 100%; left: 0; right: 0; max-height: 180px; overflow-y: auto; border: 1px solid #ccc; background: white; display: none; z-index: 1000; border-radius: 0 0 4px 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+      <!-- Options will be dynamically inserted here -->
+    </div>
+  </div>
+</div>
+
+
+  {% if form.staff.errors %}
+    <div class="text-danger">
+      {% for error in form.staff.errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+
+      
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-success">
+        <i class="fas fa-check-circle me-1"></i>
+        {% if object %} Update {% else %} Book Course {% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const select = document.querySelector("select[name='staff']"); // Django field
+  const dropdown = document.getElementById("staff-dropdown");
+  const selectedDiv = document.getElementById("staff-selected");
+  const optionsDiv = document.getElementById("staff-options");
+  
+  // Load options from Django select
+  Array.from(select.options).forEach(opt => {
+    const option = document.createElement("div");
+    option.textContent = opt.text;
+    option.dataset.value = opt.value;
+    option.style.padding = "5px";
+    option.style.cursor = "pointer";
+
+    option.addEventListener("click", function (e) {
+      // Toggle selection
+      if (opt.selected) {
+        opt.selected = false;
+        selectedDiv.querySelector(`[data-value="${opt.value}"]`)?.remove();
+      } else {
+        opt.selected = true;
+        const tag = document.createElement("span");
+        tag.textContent = opt.text;
+        tag.dataset.value = opt.value;
+        tag.style.background = "#007bff";
+        tag.style.color = "white";
+        tag.style.padding = "2px 6px";
+        tag.style.borderRadius = "3px";
+        tag.style.fontSize = "12px";
+        tag.style.display = "inline-block";
+        tag.style.margin = "2px";
+        tag.style.cursor = "pointer";
+        tag.addEventListener("click", () => {
+          opt.selected = false;
+          tag.remove();
+        });
+        selectedDiv.appendChild(tag);
+      }
+    });
+
+    optionsDiv.appendChild(option);
+  });
+
+  // Toggle dropdown
+  dropdown.addEventListener("click", function () {
+    optionsDiv.style.display = optionsDiv.style.display === "block" ? "none" : "block";
+  });
+});
+</script>
+
+
+
+
+
+{% endblock %}
+

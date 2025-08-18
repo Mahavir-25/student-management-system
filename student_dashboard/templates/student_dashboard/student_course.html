@@ -1,0 +1,60 @@
+{% extends 'student_dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+
+      <div class="card shadow border-0">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">📘 My Enrolled Courses</h4>
+        </div>
+
+        <div class="card-body">
+          {% if courses %}
+            <div class="table-responsive">
+              <table class="table table-striped align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Course</th>
+                    <th>Batch</th>
+                    <th>Faculty</th>
+                    <th>Booked On</th>
+                    <th>Action</th> <!-- Added for the button -->
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for booking in courses %}
+                    <tr>
+                    <td><strong>{{ booking.course.name }}</strong></td>
+                    <td>{{ booking.get_batch_display }}</td>
+                    <td>{{ booking.staff.get_full_name|default:"Not Assigned" }}</td>
+                    <td>{{ booking.created_at|date:"M d, Y - h:i A" }}</td>
+                    <td>
+                        {% if booking.course.pk %}
+                        <a href="{% url 'student_course_details'  booking.pk %}" class="btn btn-sm btn-outline-primary">
+                            Details
+                        </a>
+                        {% else %}
+                        <span class="text-muted">No course assigned</span>
+                        {% endif %}
+                    </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="alert alert-warning text-center" role="alert">
+              You haven’t enrolled in any courses yet.
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

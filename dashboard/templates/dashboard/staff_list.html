@@ -1,0 +1,175 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="content">
+  <div class="page-inner">
+    {% if messages %}
+      <div class="container mt-1" style="margin-top: 200px; z-index: 9999; position: relative;">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="page-header">
+      <h4 class="page-title">Staff List</h4>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h4 class="page-title">Staff List</h4>
+
+      <!-- 🔍 Search Filter -->
+      
+
+      <!-- Add Staff Button -->
+      <div class="mb-3 text-end">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStaffModal">
+          + Add Staff
+        </button>
+      </div>
+
+      <!-- Staff Table -->
+        <table id="mytable"class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Full Name</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Action</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for Staff in Staff %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ Staff.first_name }} {{ Staff.last_name }}</td>
+                <td>{{ Staff.username }}</td>
+                <td>{{ Staff.email }}</td>
+                <td>
+                  <a href="{% url 'view_Staff' Staff.pk %}" title="View">
+                    <i class="bi bi-eye fs-4 text-dark"></i>
+                  </a>
+                </td>
+           
+                <td>
+                 <form method="post" action="{% url 'delete_user' Staff.id %}" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete?')">Delete</button>
+</form>
+                </td>
+              </tr>
+              {% endfor %}
+            
+          </tbody>
+        </table>
+
+      <!-- Add Staff Modal -->
+      <div class="modal fade" id="addStaffModal" tabindex="-1" aria-labelledby="addStaffModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addStaffModalLabel">Add Staff</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form method="post" enctype="multipart/form-data" action="{%url 'add_student'%}">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      {{ form.first_name.label_tag }}
+      {{ form.first_name }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      {{ form.last_name.label_tag }}
+      {{ form.last_name }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      {{ form.username.label_tag }}
+      {{ form.username }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      {{ form.email.label_tag }}
+      {{ form.email }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      {{ form.phone.label_tag }}
+      {{ form.phone }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      {{ form.gender.label_tag }}
+      {{ form.gender }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      {{ form.role.label_tag }}
+      {{ form.role }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      {{ form.course.label_tag }}
+      {{ form.course }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      {{ form.batch.label_tag }}
+      {{ form.batch }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      {{ form.dob.label_tag }}
+      {{ form.dob }}
+    </div>
+
+    <div class="col-md-12 mb-3">
+      {{ form.profile_picture.label_tag }}
+      {{ form.profile_picture }}
+    </div>
+  </div>
+
+  <div class="text-end">
+    <button type="submit" class="btn btn-success px-4">Add Staff</button>
+  </div>
+</form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block script %}
+
+<script>
+$(document).ready(function () {
+    $('#mytable').DataTable({
+      pagingType: 'simple_numbers',
+      language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Search Staffs...",
+        lengthMenu: "Show _MENU_ entries"
+      }
+    });
+
+    // ✅ Custom styling if needed
+    $('.dataTables_filter input').addClass('form-control form-control-sm-3 mb-5'); // Search box
+    $('.dataTables_length select').addClass('form-select form-select-sm-4 d-inline-block w-auto'); // Row select
+  });
+</script>
+
+{% endblock script %}

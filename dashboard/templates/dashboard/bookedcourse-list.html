@@ -1,0 +1,80 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Bootstrap & DataTable CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+<div class="container mt-15">
+  <div class="card shadow border-0 rounded-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0"><i class="bi bi-list-ul"></i> Booked Course List</h4>
+      <a href="{% url 'book_course' %}" class="btn btn-light btn-sm">
+        <i class="bi bi-clipboard-plus"></i> Book Course
+      </a>
+    </div>
+
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="courseTable" class="table table-striped table-hover table-bordered align-middle">
+          <thead class="table-light text-center">
+            <tr>
+              <th>#</th>
+              <th>Course</th>
+              <th>Student</th>
+              <th>Staff</th>
+              <th>Batch</th>
+              <th>Created At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for bookcourse in booked_courses %}
+            <tr>
+              <td class="text-center">{{ forloop.counter }}</td>
+              <td>{{ bookcourse.course.name }}</td>
+              <td>{{ bookcourse.students.get_full_name }}</td>
+              <td>{{ bookcourse.staff.get_full_name }}</td>
+              <td>{{ bookcourse.get_batch_display }}</td>
+              <td>{{ bookcourse.created_at|date:"d M Y H:i" }}</td>
+              <td class="text-center">
+                <a href="{% url 'update_booked_course' bookcourse.id %}" class="btn btn-sm btn-outline-warning">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="{% url 'delete_bookedcourse' bookcourse.id %}" 
+                class="btn btn-sm btn-outline-danger"
+                onclick="return confirm('Are you sure you want to delete this booking?');">
+                <i class="bi bi-trash-fill"></i>
+              </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center text-muted">No booked courses found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- jQuery, Bootstrap, DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#courseTable').DataTable({
+      pageLength: 10,
+      lengthMenu: [5, 10, 25, 50],
+      columnDefs: [
+        { orderable: false, targets: [6] } // disable sorting on action column
+      ]
+    });
+  });
+</script>
+
+{% endblock %}

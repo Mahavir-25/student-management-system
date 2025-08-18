@@ -1,0 +1,62 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="container mt-8">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Add New User</h4>
+    </div>
+    <div class="card-body">
+
+      <form method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- Non-field errors -->
+        {% if form.is_bound and form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="row">
+          {% for field in form.visible_fields %}
+            <div class="col-md-6 mb-3 {% if field.name == 'batch' %}student-only{% endif %}" {% if field.name == 'batch' %}style="display: none;"{% endif %}>
+              {{ field.label_tag }}
+              {{ field }}
+              {% if form.is_bound and field.errors %}
+                <div class="text-danger small">{{ field.errors.0 }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="text-end mt-3">
+          <button type="submit" class="btn btn-success px-4">Create</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const roleField = document.getElementById("id_role");
+    const studentFields = document.querySelectorAll(".student-only");
+
+    function toggleFields() {
+      const role = roleField.value;
+      if (role === "student") {
+        studentFields.forEach(el => el.style.display = "block");
+      } else {
+        studentFields.forEach(el => el.style.display = "none");
+      }
+    }
+
+    toggleFields();
+    roleField.addEventListener("change", toggleFields);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="container mt-10">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-header {% if is_edit %}bg-warning{% else %}bg-primary{% endif %} text-white rounded-top-4">
+      <h4 class="mb-0">
+        <i class="bi {% if is_edit %}bi-pencil{% else %}bi-journal-plus{% endif %} me-2"></i>
+        {% if is_edit %}Edit Course{% else %}Add New Course{% endif %}
+      </h4>
+    </div>
+    <div class="card-body p-4">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">{{ form.name.label }}</label>
+            {{ form.name }}
+          </div>
+          <div class="col-md-6">
+            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">{{ form.category.label }}</label>
+            {{ form.category }}
+          </div>
+
+          <div class="col-md-6">
+            <label for="{{ form.fees.id_for_label }}" class="form-label fw-semibold">{{ form.fees.label }}</label>
+            {{ form.fees }}
+          </div>
+          <div class="col-md-6">
+            <label for="{{ form.duration.id_for_label }}" class="form-label fw-semibold">{{ form.duration.label }}</label>
+            {{ form.duration }}
+          </div>
+
+          <div class="col-md-6 mb-3">
+  {{ form.trainers.label_tag }}
+  {{ form.trainers}}
+
+  <div id="trainers-dropdown" style="position: relative; max-width: 300px; user-select:none; cursor:pointer; border:1px solid #ccc; padding:5px; border-radius:4px;">
+    <div id="trainers-selected" style="min-height: 35px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center;">
+      <span style="color: #888;">Select trainers...</span>
+    </div>
+    <div id="trainers-options" style="position: absolute; top: 100%; left: 0; right: 0; max-height: 180px; overflow-y: auto; border: 1px solid #ccc; background: white; display: none; z-index: 1000; border-radius: 0 0 4px 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+      <!-- Options will be dynamically inserted here -->
+    </div>
+  </div>
+
+  {% if form.trainers.errors %}
+    <div class="text-danger">
+      {% for error in form.trainers.errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+          <div class="col-md-6">
+            <label for="{{ form.timing.id_for_label }}" class="form-label fw-semibold">{{ form.timing.label }}</label>
+            {{ form.timing }}
+          </div>
+
+          <div class="col-12">
+            <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">{{ form.description.label }}</label>
+            {{ form.description }}
+          </div>
+        </div>
+
+        <div class="text-end mt-4">
+          <button type="submit" class="btn {% if is_edit %}btn-warning{% else %}btn-success{% endif %} px-4">
+            <i class="bi {% if is_edit %}bi-pencil-square{% else %}bi-save{% endif %} me-1"></i>
+            {% if is_edit %}Update Course{% else %}Create Course{% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const trainersSelect = document.querySelector('select[name="trainers"]');
+  const dropdown = document.getElementById('trainers-dropdown');
+  const selectedDiv = document.getElementById('trainers-selected');
+  const optionsDiv = document.getElementById('trainers-options');
+
+  // Hide original select using JS (no CSS)
+  trainersSelect.style.display = 'none';
+
+  // Populate optionsDiv with trainers options
+  for (let option of trainersSelect.options) {
+    const optDiv = document.createElement('div');
+    optDiv.textContent = option.text;
+    optDiv.dataset.value = option.value;
+    optDiv.style.padding = '5px';
+    optDiv.style.cursor = 'pointer';
+
+    // Highlight selected options
+    if (option.selected) {
+      optDiv.style.backgroundColor = '#007bff';
+      optDiv.style.color = 'white';
+      addSelectedTag(option.value, option.text);
+    }
+
+    optDiv.addEventListener('click', () => {
+      option.selected = !option.selected;
+      if (option.selected) {
+        optDiv.style.backgroundColor = '#007bff';
+        optDiv.style.color = 'white';
+        addSelectedTag(option.value, option.text);
+      } else {
+        optDiv.style.backgroundColor = '';
+        optDiv.style.color = '';
+        removeSelectedTag(option.value);
+      }
+      trainersSelect.dispatchEvent(new Event('change'));
+    });
+
+    optionsDiv.appendChild(optDiv);
+  }
+
+  // Toggle dropdown visibility
+  selectedDiv.addEventListener('click', () => {
+    optionsDiv.style.display = optionsDiv.style.display === 'block' ? 'none' : 'block';
+  });
+
+  // Helper to add tag for selected trainers
+  function addSelectedTag(value, text) {
+    const tag = document.createElement('span');
+    tag.className = 'trainers-tag';
+    tag.textContent = text;
+    tag.dataset.value = value;
+    tag.style.backgroundColor = '#007bff';
+    tag.style.color = 'white';
+    tag.style.padding = '2px 6px';
+    tag.style.borderRadius = '4px';
+    tag.style.marginRight = '4px';
+    tag.style.cursor = 'default';
+
+    tag.addEventListener('click', (e) => {
+      e.stopPropagation();
+      for (let option of trainersSelect.options) {
+        if (option.value === value) {
+          option.selected = false;
+        }
+      }
+      tag.remove();
+      for (let div of optionsDiv.children) {
+        if (div.dataset.value === value) {
+          div.style.backgroundColor = '';
+          div.style.color = '';
+        }
+      }
+      trainersSelect.dispatchEvent(new Event('change'));
+    });
+
+    selectedDiv.appendChild(tag);
+
+    // Remove placeholder text if present
+    let placeholder = selectedDiv.querySelector('span[style*="color: #888"]');
+    if (placeholder) placeholder.style.display = 'none';
+  }
+
+  // Helper to remove tag when option unselected
+  function removeSelectedTag(value) {
+    const tag = selectedDiv.querySelector(`span.trainers-tag[data-value="${value}"]`);
+    if (tag) tag.remove();
+
+    // Show placeholder if none selected
+    if (selectedDiv.querySelectorAll('span.trainers-tag').length === 0) {
+      let placeholder = selectedDiv.querySelector('span[style*="color: #888"]');
+      if (placeholder) placeholder.style.display = 'inline';
+    }
+  }
+
+  // Close dropdown if clicking outside
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target)) {
+      optionsDiv.style.display = 'none';
+    }
+  });
+});
+</script>
+{% endblock %}
