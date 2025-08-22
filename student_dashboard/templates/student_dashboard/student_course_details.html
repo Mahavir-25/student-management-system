@@ -32,7 +32,11 @@
         </div>
         <div class="col-md-6 mb-3">
           <h6><i class="bi bi-person-check me-1 text-info"></i><strong>Trainer:</strong></h6>
-          {{ course.staff|default:"Not Assigned" }}
+          {% for trainer in course.trainers.all %}
+    {{ trainer }}{% if not forloop.last %}, {% endif %}
+  {% empty %}
+    No trainers assigned
+  {% endfor %}
         </div>
       </div>
 
